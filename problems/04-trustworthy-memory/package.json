@@ -1,0 +1,30 @@
+{
+  "name": "04-trustworthy-memory",
+  "version": "1.0.0",
+  "description": "A persistent conversational companion becomes useful when it remembers relevant details over time. It becomes untrustworthy when it repeats outdated facts, cannot show where a memory came from, or keeps information the user asked it to forget.",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "dev": "tsx src/index.ts",
+    "build": "tsc",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "benchmark": "tsx benchmark/run.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "zod": "^4.6.5"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.2",
+    "tsx": "^4.23.15",
+    "typescript": "^7.0.2",
+    "vitest": "^5.0.1"
+  }
+}

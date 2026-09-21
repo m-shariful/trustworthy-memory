@@ -7,6 +7,7 @@ export interface MemoryRepository {
   getById(id: string): Promise<Memory | undefined>;
   save(memory: Memory): Promise<void>;
   replace(memory: Memory): Promise<void>;
+  supersede(previousMemory: Memory, replacementMemory: Memory): Promise<void>;
 }
 
 export class FileMemoryRepository implements MemoryRepository {
@@ -43,6 +44,33 @@ export class FileMemoryRepository implements MemoryRepository {
 
     const updated = [...memories];
     updated[index] = memory;
+
+    await this.store.write(updated);
+  }
+
+  async supersede(
+    previousMemory: Memory,
+    replacementMemory: Memory,
+  ): Promise<void> {
+    const memories = await this.store.read();
+
+    const previousIndex = memories.findIndex(
+      (memory) => memory.id === previousMemory.id,
+    );
+
+    if (previousIndex === -1) {
+      throw new Error(`Memory not found: ${previousMemory.id}`);
+    }
+
+    if (memories.some((memory) => memory.id === replacementMemory.id)) {
+      throw new Error(
+        `Replacement memory already exists: ${replacementMemory.id}`,
+      );
+    }
+
+    const updated = [...memories];
+    updated[previousIndex] = previousMemory;
+    updated.push(replacementMemory);
 
     await this.store.write(updated);
   }
@@ -86,5 +114,30 @@ export class InMemoryMemoryRepository implements MemoryRepository {
     }
 
     this.memories[index] = memory;
+  }
+
+  async supersede(
+    previousMemory: Memory,
+    replacementMemory: Memory,
+  ): Promise<void> {
+    const previousIndex = this.memories.findIndex(
+      (memory) => memory.id === previousMemory.id,
+    );
+
+    if (previousIndex === -1) {
+      throw new Error(`Memory not found: ${previousMemory.id}`);
+    }
+
+    if (this.memories.some((memory) => memory.id === replacementMemory.id)) {
+      throw new Error(
+        `Replacement memory already exists: ${replacementMemory.id}`,
+      );
+    }
+
+    const updated = [...this.memories];
+    updated[previousIndex] = previousMemory;
+    updated.push(replacementMemory);
+
+    this.memories = updated;
   }
 }

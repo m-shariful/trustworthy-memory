@@ -17,6 +17,9 @@ export const MemoryTypeSchema = z.enum([
 
 export type MemoryType = z.infer<typeof MemoryTypeSchema>;
 
+export const ConflictStatusSchema = z.enum(["none", "ambiguous"]);
+export type ConflictStatus = z.infer<typeof ConflictStatusSchema>;
+
 export const MemorySourceSchema = z.object({
   sourceId: z.string().min(1),
   sourceType: z.enum(["message", "fixture"]),
@@ -36,8 +39,10 @@ export const MemorySchema = z.object({
 
   source: MemorySourceSchema,
 
-  createdAt: z.string().datetime(),
-  updatedAt: z.string().datetime(),
+  conflictStatus: ConflictStatusSchema,
+
+  createdAt: z.iso.datetime(),
+  updatedAt: z.iso.datetime(),
 
   supersedesMemoryId: z.string().nullable(),
   supersededByMemoryId: z.string().nullable(),
